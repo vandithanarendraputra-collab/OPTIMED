@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPTIMED - Solusi Kesehatan Terpercaya Anda</title>
+  <meta name="description" content="Di OPTIMED, kami percaya kesehatan maksimal adalah perjalanan berkelanjutan. Dapatkan konsultasi dokter, home call, vaksinasi, booster, dan layanan medis terbaik.">
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet.js CSS for Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header / Navigation Bar -->
+  <header class="header">
+    <div class="header-container">
+      <!-- Logo -->
+      <a href="#beranda" class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="var(--color-primary)"/>
+          <path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text">OPTIMED</span>
+      </a>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="APA YANG INGIN ANDA CARI?" autocomplete="off">
+        <!-- Search Results Dropdown -->
+        <div id="search-results" class="search-results-dropdown"></div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="nav-menu">
+        <a href="#beranda" class="nav-link active">BERANDA</a>
+        <a href="#service" class="nav-link">SERVICE</a>
+        <a href="#rating" class="nav-link">RATING</a>
+        <a href="#maps" class="nav-link">MAPS</a>
+      </nav>
+
+      <!-- Right Actions (Language & Profile) -->
+      <div class="header-actions">
+        <!-- Language Selector -->
+        <div class="lang-selector">
+          <button class="lang-btn" id="lang-en">ENG</button>
+          <button class="lang-btn active" id="lang-id">ID</button>
+        </div>
+        
+        <!-- User Profile Avatar -->
+        <div class="profile-avatar" id="profile-avatar-btn">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100" alt="User Profile">
+          <span class="profile-online-dot"></span>
+          <div class="profile-dropdown" id="profile-dropdown-menu">
+            <!-- Dropdown Header -->
+            <div class="profile-dropdown-header">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100" alt="User Profile" class="profile-dropdown-avatar">
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name">Alok Aleksander</span>
+                <span class="profile-dropdown-role">Pasien Terdaftar</span>
+              </div>
+            </div>
+            <div class="profile-dropdown-divider"></div>
+            <!-- Dropdown Menu Items -->
+            <button class="profile-dropdown-item" id="btn-open-profil">
+              <span class="profile-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <span class="profile-item-text">Profil Saya</span>
+              <svg class="profile-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="profile-dropdown-item" id="btn-open-riwayat">
+              <span class="profile-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </span>
+              <span class="profile-item-text">Riwayat Janji</span>
+              <svg class="profile-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div class="profile-dropdown-divider"></div>
+            <button class="profile-dropdown-item profile-item-danger">
+              <span class="profile-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              </span>
+              <span class="profile-item-text">Keluar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu Toggle Button -->
+      <button class="mobile-toggle" aria-label="Toggle Navigation Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav">
+    <a href="#beranda" class="mobile-nav-link active">BERANDA</a>
+    <a href="#service" class="mobile-nav-link">SERVICE</a>
+    <a href="#rating" class="mobile-nav-link">RATING</a>
+    <a href="#maps" class="mobile-nav-link">MAPS</a>
+  </div>
+
+  <main>
+    <!-- Section 1: Hero / Beranda -->
+    <section id="beranda" class="hero-section">
+      <div class="container hero-container">
+        <!-- Hero Text Content -->
+        <div class="hero-content">
+          <h1 class="hero-title animate-fade-in-up">SELAMAT DATANG DI OPTIMED</h1>
+          <p class="hero-description animate-fade-in-up delay-100">
+            Di OPTIMED, kami percaya bahwa kesehatan maksimal bukanlah tujuan akhir, melainkan sebuah perjalanan yang berkelanjutan. Kami hadir untuk menjembatani jarak antara keinginanmu untuk hidup prima dengan cara yang cerdas, personal, dan terukur. Kami tidak hanya memberikan informasi, kami memberikan solusi yang dirancang khusus untuk kebutuhan unik tubuh dan gaya hidupmu.
+          </p>
+          
+          <!-- Hero Actions -->
+          <div class="hero-actions animate-fade-in-up delay-200">
+            <a href="#service" class="btn btn-outline">MULAI</a>
+            <a href="https://wa.me/628123456789" target="_blank" rel="noopener noreferrer" class="btn btn-solid-teal">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.528 2.01 14.069.99 11.45.99c-5.438 0-9.863 4.373-9.867 9.801-.001 1.968.515 3.89 1.498 5.606l-.993 3.624 3.71-.977zm11.587-6.845c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+              KONTAK DENGAN WA
+            </a>
+          </div>
+
+          <!-- Trust Badge / Floating Stat -->
+          <div class="trust-badge animate-fade-in-up delay-300">
+            <div class="badge-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="9" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <div class="badge-text">
+              <span class="badge-number">500+</span>
+              <span class="badge-desc">ORANG PERCAYA DENGAN RUMAH SAKIT KAMI</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Visual/Illustration -->
+        <div class="hero-visual animate-scale-in">
+          <img src="assets/hero_illustration.png" alt="Dokter Melakukan Cek Kesehatan" class="hero-image">
+          <!-- Decorative UI elements -->
+          <div class="hero-card-floating speed-badge">
+            <svg class="floating-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <div>
+              <h4>Respon Cepat</h4>
+              <p>&lt; 20 Menit Sampai Vila</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Services / Service -->
+    <section id="service" class="services-section">
+      <div class="container">
+        <h2 class="section-title text-center scroll-reveal">PELAYANAN YANG KAMI SEDIAKAN</h2>
+        
+        <!-- Services Grid -->
+        <div class="services-grid">
+          
+          <!-- Card 1: Consultation -->
+          <div class="service-card scroll-reveal">
+            <div class="service-img-wrapper">
+              <img src="assets/service_consultation.png" alt="Konsultasikan keluhanmu di sini.">
+            </div>
+            <div class="service-info">
+              <h3 class="service-title">Konsultasikan keluhanmu di sini.</h3>
+              <div class="divider"></div>
+              <p class="service-description">
+                Ceritakan keluhanmu dan dapatkan saran medis akurat langsung dari ahlinya tanpa ribet.
+              </p>
+              <button class="btn btn-card btn-order-service" data-service="Konsultasikan keluhanmu di sini.">Pesan Sekarang</button>
+            </div>
+          </div>
+
+          <!-- Card 2: Home Doctor Call -->
+          <div class="service-card scroll-reveal">
+            <div class="service-img-wrapper">
+              <img src="assets/service_homecall.png" alt="Panggil dokter ke lokasi kamu">
+            </div>
+            <div class="service-info">
+              <h3 class="service-title">Panggil dokter ke lokasi kamu</h3>
+              <div class="divider"></div>
+              <p class="service-description">
+                Tim medis kami siap datang ke vila atau hotelmu dalam hitungan menit untuk penanganan langsung.
+              </p>
+              <button class="btn btn-card btn-order-service" data-service="Panggil dokter ke lokasi kamu">Pesan Sekarang</button>
+            </div>
+          </div>
+
+          <!-- Card 3: Vaccination -->
+          <div class="service-card scroll-reveal">
+            <div class="service-img-wrapper">
+              <img src="assets/service_vaccine.png" alt="Dapatkan perlindungan vaksinasi.">
+            </div>
+            <div class="service-info">
+              <h3 class="service-title">Dapatkan perlindungan vaksinasi.</h3>
+              <div class="divider"></div>
+              <p class="service-description">
+                Lindungi dirimu dari risiko gigitan atau cakaran hewan dengan tindakan vaksinasi yang cepat dan steril.
+              </p>
+              <button class="btn btn-card btn-order-service" data-service="Dapatkan perlindungan vaksinasi.">Pesan Sekarang</button>
+            </div>
+          </div>
+
+          <!-- Card 4: Booster Vitamin -->
+          <div class="service-card scroll-reveal">
+            <div class="service-img-wrapper">
+              <img src="assets/service_booster.png" alt="Pilih booster favoritmu.">
+            </div>
+            <div class="service-info">
+              <h3 class="service-title">Pilih booster favoritmu.</h3>
+              <div class="divider"></div>
+              <p class="service-description">
+                Kembalikan stamina dan vitalitas tubuhmu secara instan dengan booster vitamin yang dirancang khusus.
+              </p>
+              <button class="btn btn-card btn-order-service" data-service="Pilih booster favoritmu.">Pesan Sekarang</button>
+            </div>
+          </div>
+
+          <!-- Card 5: Wound Care -->
+          <div class="service-card scroll-reveal">
+            <div class="service-img-wrapper">
+              <img src="assets/service_woundcare.png" alt="Obati lukamu dengan cara yang benar.">
+            </div>
+            <div class="service-info">
+              <h3 class="service-title">Obati lukamu dengan cara yang benar.</h3>
+              <div class="divider"></div>
+              <p class="service-description">
+                Rawat lukamu dengan prosedur higienis oleh dokter kami agar proses penyembuhan lebih cepat dan aman.
+              </p>
+              <button class="btn btn-card btn-order-service" data-service="Obati lukamu dengan cara yang benar.">Pesan Sekarang</button>
+            </div>
+          </div>
+
+          <!-- Card 6: Health Check / Lab -->
+          <div class="service-card scroll-reveal">
+            <div class="service-img-wrapper">
+              <img src="assets/service_checkup.png" alt="Cek kesehatanmu sekarang.">
+            </div>
+            <div class="service-info">
+              <h3 class="service-title">Cek kesehatanmu sekarang.</h3>
+              <div class="divider"></div>
+              <p class="service-description">
+                Pantau kondisi tubuhmu dengan hasil lab yang valid untuk langkah perawatan yang lebih terarah.
+              </p>
+              <button class="btn btn-card btn-order-service" data-service="Cek kesehatanmu sekarang.">Pesan Sekarang</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Testimonials / Rating -->
+    <section id="rating" class="rating-section">
+      <div class="rating-background-overlay"></div>
+      <div class="container rating-container">
+        <h2 class="section-title text-center text-white scroll-reveal">APA PENDAPAT ORANG LAIN TENTANG RUMAH SAKIT INI</h2>
+        
+        <!-- Testimonial Cards Layout -->
+        <div class="testimonials-container">
+          
+          <!-- Testimonial 1 -->
+          <div class="testimonial-card scroll-reveal">
+            <div class="testimonial-header">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150" alt="Alok Aleksander" class="testimonial-avatar">
+              <div class="testimonial-meta">
+                <span class="testimonial-name">ALOK ALEKSANDER</span>
+                <div class="testimonial-stars">
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-divider"></div>
+            <p class="testimonial-text">
+              "Lagi liburan di Ubud tapi tiba-tiba kondisi badan drop, untungnya nemu OPTIMED. Dokter datang ke vila kurang dari 20 menit, penanganannya gercep dan super profesional. Sangat ngebantu banget pas lagi jauh dari rumah!"
+            </p>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="testimonial-card scroll-reveal">
+            <div class="testimonial-header">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150" alt="Alok Aleksander" class="testimonial-avatar">
+              <div class="testimonial-meta">
+                <span class="testimonial-name">ALOK ALEKSANDER</span>
+                <div class="testimonial-stars">
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-divider"></div>
+            <p class="testimonial-text">
+              "Suka banget sama interface OPTIMED yang simpel. Konsultasi dokter bahasa Inggrisnya bener-bener ngebantu buat temen saya yang turis. Semuanya jelas, transparan, dan bikin tenang. Recommended buat yang butuh layanan medis darurat atau sekadar cek kesehatan."
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Location / Maps -->
+    <section id="maps" class="maps-section">
+      <div class="container">
+        <h2 class="section-title text-center scroll-reveal">LOKASI</h2>
+        <p class="section-subtitle text-center scroll-reveal">
+          Lihat lokasi layanan OPTIMED di peta dan buka Google Maps untuk petunjuk arah.
+        </p>
+
+        <!-- Leaflet Map Container -->
+        <div class="map-wrapper scroll-reveal">
+          <div id="map"></div>
+          <!-- Click to Open Google Maps Helper -->
+          <a id="gmaps-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=-8.6705%2C115.2126" target="_blank" rel="noopener noreferrer" class="gmaps-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            Buka di Google Maps
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <!-- Column 1: Brand Tagline -->
+      <div class="footer-col footer-brand-col">
+        <h2 class="footer-logo">OPTIMED</h2>
+        <p class="footer-tagline" id="footer-tagline">pelayanan dokter yang bagus dan pastinya terpercaya</p>
+      </div>
+      
+      <!-- Column 2: Tentang Nav -->
+      <div class="footer-col">
+        <h3 class="footer-col-title" id="footer-title-tentang">TENTANG</h3>
+        <ul class="footer-links-list">
+          <li><a href="#beranda" class="footer-link-item nav-link-home">BERANDA</a></li>
+          <li><a href="#service" class="footer-link-item nav-link-service">SERVICE</a></li>
+          <li><a href="#rating" class="footer-link-item nav-link-rating">RATING</a></li>
+          <li><a href="#maps" class="footer-link-item nav-link-maps">MAPS</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Support Info -->
+      <div class="footer-col">
+        <h3 class="footer-col-title" id="footer-title-support">SUPPORT</h3>
+        <ul class="footer-links-list">
+          <li><a href="#" class="footer-link-item">FAQs</a></li>
+          <li><a href="#" class="footer-link-item">Cookie Policy</a></li>
+          <li><a href="#" class="footer-link-item" id="footer-link-terms">Syarat Penggunaan</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Booking Modal -->
+  <div id="booking-modal" class="modal-overlay">
+    <div class="modal-container">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <div class="modal-header">
+        <h3 id="modal-service-title">Pesan Layanan Kesehatan</h3>
+        <p id="modal-service-subtitle">Silakan isi detail kunjungan Anda untuk terhubung ke tim WhatsApp kami.</p>
+      </div>
+      <form id="booking-form" class="modal-form">
+        <div class="form-group">
+          <label for="booking-name" id="label-name">Nama Lengkap</label>
+          <input type="text" id="booking-name" required placeholder="Masukkan nama lengkap Anda">
+        </div>
+        <div class="form-group">
+          <label for="booking-phone" id="label-phone">Nomor WhatsApp</label>
+          <input type="tel" id="booking-phone" required placeholder="Contoh: 08123456789">
+        </div>
+        <div class="form-group">
+          <label for="booking-location" id="label-location">Lokasi Villa / Hotel / Alamat di Bali</label>
+          <input type="text" id="booking-location" required placeholder="Nama villa/hotel & nomor kamar">
+        </div>
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="booking-date" id="label-date">Tanggal Kunjungan</label>
+            <input type="date" id="booking-date" required>
+          </div>
+          <div class="form-group">
+            <label for="booking-time" id="label-time">Waktu Kunjungan</label>
+            <input type="time" id="booking-time" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="booking-notes" id="label-notes">Detail Keluhan Medis</label>
+          <textarea id="booking-notes" rows="3" placeholder="Jelaskan secara singkat gejala atau kebutuhan medis Anda"></textarea>
+        </div>
+        <button type="submit" id="btn-submit-booking" class="btn btn-solid-teal w-full">Kirim Pemesanan via WhatsApp</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== PROFIL SAYA MODAL ===== -->
+  <div id="profil-modal" class="modal-overlay">
+    <div class="modal-container modal-profile-container">
+      <button class="modal-close" id="profil-modal-close">&times;</button>
+
+      <!-- Profile Modal Header Banner -->
+      <div class="profile-modal-banner">
+        <div class="profile-modal-banner-bg"></div>
+        <div class="profile-modal-avatar-wrap">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&h=200" alt="Avatar" class="profile-modal-avatar">
+          <span class="profile-modal-online-badge"></span>
+        </div>
+        <div class="profile-modal-banner-info">
+          <h2 class="profile-modal-name">Alok Aleksander</h2>
+          <span class="profile-modal-badge">Pasien Terdaftar</span>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="profile-stats-row">
+        <div class="profile-stat-item">
+          <span class="profile-stat-num">3</span>
+          <span class="profile-stat-label">Janji Aktif</span>
+        </div>
+        <div class="profile-stat-divider"></div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-num">7</span>
+          <span class="profile-stat-label">Total Kunjungan</span>
+        </div>
+        <div class="profile-stat-divider"></div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-num">⭐ 5.0</span>
+          <span class="profile-stat-label">Rating Anda</span>
+        </div>
+      </div>
+
+      <!-- Profile Form -->
+      <form class="profile-form" id="profile-edit-form">
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Nama Depan</label>
+            <input type="text" value="Alok" placeholder="Nama depan">
+          </div>
+          <div class="form-group">
+            <label>Nama Belakang</label>
+            <input type="text" value="Aleksander" placeholder="Nama belakang">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" value="alok.aleksander@email.com" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <label>Nomor WhatsApp</label>
+          <input type="tel" value="+62 812-3456-789" placeholder="Nomor WhatsApp">
+        </div>
+        <div class="form-group">
+          <label>Alamat di Bali</label>
+          <input type="text" value="Villa Nirwana, Ubud, Bali" placeholder="Alamat villa/hotel/rumah">
+        </div>
+        <div class="form-group">
+          <label>Catatan Kesehatan (alergi, kondisi, dll.)</label>
+          <textarea rows="2" placeholder="Contoh: alergi penisilin, hipertensi">Tidak ada catatan khusus.</textarea>
+        </div>
+        <div class="profile-form-actions">
+          <button type="button" class="btn btn-outline" id="profil-modal-cancel">Batal</button>
+          <button type="submit" class="btn btn-solid-teal">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== RIWAYAT JANJI MODAL ===== -->
+  <div id="riwayat-modal" class="modal-overlay">
+    <div class="modal-container modal-riwayat-container">
+      <button class="modal-close" id="riwayat-modal-close">&times;</button>
+      <div class="modal-header">
+        <h3>Riwayat Janji Temu</h3>
+        <p>Semua riwayat kunjungan dan pemesanan layanan OPTIMED Anda.</p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="riwayat-tabs">
+        <button class="riwayat-tab active" data-tab="semua">Semua</button>
+        <button class="riwayat-tab" data-tab="aktif">Aktif</button>
+        <button class="riwayat-tab" data-tab="selesai">Selesai</button>
+        <button class="riwayat-tab" data-tab="dibatalkan">Dibatalkan</button>
+      </div>
+
+      <!-- Appointment Cards -->
+      <div class="riwayat-list" id="riwayat-list">
+
+        <!-- Card 1: Aktif -->
+        <div class="riwayat-card" data-status="aktif">
+          <div class="riwayat-card-header">
+            <div class="riwayat-service-icon riwayat-icon-homecall">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="riwayat-card-info">
+              <h4>Panggil Dokter ke Lokasi</h4>
+              <p class="riwayat-date">📅 25 Juli 2026 &nbsp; ⏰ 14:00 WITA</p>
+              <p class="riwayat-location">📍 Villa Nirwana No. 7, Ubud</p>
+            </div>
+            <span class="riwayat-status-badge badge-aktif">Aktif</span>
+          </div>
+          <div class="riwayat-card-footer">
+            <span class="riwayat-doctor">👨‍⚕️ dr. Budi Santoso, Sp.PD</span>
+            <button class="btn-riwayat-action btn-cancel-apt">Batalkan</button>
+          </div>
+        </div>
+
+        <!-- Card 2: Selesai -->
+        <div class="riwayat-card" data-status="selesai">
+          <div class="riwayat-card-header">
+            <div class="riwayat-service-icon riwayat-icon-konsultasi">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="riwayat-card-info">
+              <h4>Konsultasi Kesehatan</h4>
+              <p class="riwayat-date">📅 10 Juli 2026 &nbsp; ⏰ 09:30 WITA</p>
+              <p class="riwayat-location">📍 OPTIMED Central Denpasar</p>
+            </div>
+            <span class="riwayat-status-badge badge-selesai">Selesai</span>
+          </div>
+          <div class="riwayat-card-footer">
+            <span class="riwayat-doctor">👨‍⚕️ dr. Sari Dewi, Sp.A</span>
+            <button class="btn-riwayat-action btn-pesan-lagi">Pesan Lagi</button>
+          </div>
+        </div>
+
+        <!-- Card 3: Selesai -->
+        <div class="riwayat-card" data-status="selesai">
+          <div class="riwayat-card-header">
+            <div class="riwayat-service-icon riwayat-icon-vaksin">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v3"/><circle cx="18" cy="18" r="3"/><path d="m22 22-1.5-1.5"/></svg>
+            </div>
+            <div class="riwayat-card-info">
+              <h4>Vaksinasi Rabies</h4>
+              <p class="riwayat-date">📅 2 Juni 2026 &nbsp; ⏰ 11:00 WITA</p>
+              <p class="riwayat-location">📍 OPTIMED Seminyak Emergency Point</p>
+            </div>
+            <span class="riwayat-status-badge badge-selesai">Selesai</span>
+          </div>
+          <div class="riwayat-card-footer">
+            <span class="riwayat-doctor">👨‍⚕️ dr. Made Alit, Sp.EM</span>
+            <button class="btn-riwayat-action btn-pesan-lagi">Pesan Lagi</button>
+          </div>
+        </div>
+
+        <!-- Card 4: Dibatalkan -->
+        <div class="riwayat-card" data-status="dibatalkan">
+          <div class="riwayat-card-header">
+            <div class="riwayat-service-icon riwayat-icon-booster">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="riwayat-card-info">
+              <h4>Booster Vitamin IV</h4>
+              <p class="riwayat-date">📅 18 Mei 2026 &nbsp; ⏰ 16:00 WITA</p>
+              <p class="riwayat-location">📍 OPTIMED Sanur Station</p>
+            </div>
+            <span class="riwayat-status-badge badge-dibatalkan">Dibatalkan</span>
+          </div>
+          <div class="riwayat-card-footer">
+            <span class="riwayat-doctor">—</span>
+            <button class="btn-riwayat-action btn-pesan-lagi">Pesan Lagi</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet.js Interactive Map Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Custom Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>
